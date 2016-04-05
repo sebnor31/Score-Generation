@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QThread>
+#include <qcustomplot.h>
 
 namespace Ui {
 class MainWindow;
@@ -16,11 +17,18 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void setScorePlot();
+
 
 private:
     Ui::MainWindow *ui;
-
     QThread *generateScoreThread;
+
+    QCPBars *locaBars;
+    QCPBars *magBars;
+    QCPBars *voiceBars;
+    QCPBars *lipsBars;
+    QCPBars *avgScoreBars;
 
 public slots:
     void updateScores(double loca, double mag, double voice, double lips);
