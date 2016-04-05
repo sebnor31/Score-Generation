@@ -27,24 +27,39 @@ void GenerateScores::init()
 
 void GenerateScores::computeScores(QString refLoca, QString refMag, QString refAudio, QString refLips, QString subLoca, QString subMag, QString subAudio, QString subLips)
 {
-    mwArray trajFile1("C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_loca.txt");
-    mwArray trajFile2("C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_loca.txt");
+    // Create the QString type of file paths
+    QString refTrajFileQStr     = "C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_loca.txt";
+    QString subTrajFileQStr     = "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_loca.txt";
 
-    mwArray refAudioFile("C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_audio1.wav");
-    mwArray subAudioFile("C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_audio1.wav");
+    QString refAudioFileQStr    = "C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_audio1.wav";
+    QString subAudioFileQStr    = "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_audio1.wav";
 
-    mwArray refMagFile("C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_raw_sensor.txt");
-    mwArray subMagFile("C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_raw_sensor.txt");
+    QString refMagFileQStr      = "C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_raw_sensor.txt";
+    QString subMagFileQStr      = "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_raw_sensor.txt";
 
-    mwArray refVideoFile("C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_video.avi");
-    mwArray subVideoFile("C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_video.avi");
+    QString refVideoFileQStr    = "C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_video.avi";
+    QString subVideoFileQStr    = "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_video.avi";
+    QString trainModelQStr      = QString(QCoreApplication::applicationDirPath() + "/trainedModel.mat");
+    QString uniformLBP8QStr     = QString(QCoreApplication::applicationDirPath() + "/UniformLBP8.txt");
 
-    mwArray videoTrainingModelFile("C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/bin/Qt_5_5_1_MSVC2013_64bit/release/trainedModel.mat");
-    mwArray videoUniformLBP8File("C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/bin/Qt_5_5_1_MSVC2013_64bit/release/UniformLBP8.txt");
+    // Convert QString type to Matlab mwArray type
+    mwArray refTrajFile(refTrajFileQStr.toLatin1().constData());
+    mwArray subTrajFile(subTrajFileQStr.toLatin1().constData());
 
+    mwArray refAudioFile(refAudioFileQStr.toLatin1().constData());
+    mwArray subAudioFile(subAudioFileQStr.toLatin1().constData());
 
+    mwArray refMagFile(refMagFileQStr.toLatin1().constData());
+    mwArray subMagFile(subMagFileQStr.toLatin1().constData());
+
+    mwArray refVideoFile(refVideoFileQStr.toLatin1().constData());
+    mwArray subVideoFile(subVideoFileQStr.toLatin1().constData());
+    mwArray videoTrainingModelFile(trainModelQStr.toLatin1().constData());
+    mwArray videoUniformLBP8File(uniformLBP8QStr.toLatin1().constData());
+
+    // Perform score generation
     mwArray locaScoreML;
-    locaScoreMain(1, locaScoreML, trajFile1, trajFile2, refAudioFile, subAudioFile);
+    locaScoreMain(1, locaScoreML, refTrajFile, subTrajFile, refAudioFile, subAudioFile);
     double locaScore = locaScoreML(1,1);
 
     mwArray audioScoreML;
@@ -58,7 +73,6 @@ void GenerateScores::computeScores(QString refLoca, QString refMag, QString refA
     mwArray videoScoreML;
     videoScoreMain(1, videoScoreML, videoTrainingModelFile, videoUniformLBP8File, refVideoFile, subVideoFile);
     double lipsScore = videoScoreML(1,1);
-//    double lipsScore = 0.0;
 
     emit scores(locaScore, magScore, audioScore, lipsScore);
 }
