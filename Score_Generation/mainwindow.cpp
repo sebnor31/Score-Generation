@@ -24,22 +24,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(generateScoreThread, SIGNAL(finished()), genScores, SLOT(deleteLater()));
 
     generateScoreThread->start();
+
+    // Init file path values
+    ui->refLocaPathEdit->setText(   "C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_loca.txt"      );
+    ui->refMagPathEdit->setText(    "C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_raw_sensor.txt");
+    ui->refVoicePathEdit->setText(  "C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_audio1.wav"    );
+    ui->refLipsPathEdit->setText(   "C:/TTS_Data/NEU/Sub1/word/angry/angry_1/angry_1_video.avi"     );
+
+    ui->subLocaPathEdit->setText(   "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_loca.txt"      );
+    ui->subMagPathEdit->setText(    "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_raw_sensor.txt");
+    ui->subVoicePathEdit->setText(  "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_audio1.wav"    );
+    ui->subLipsPathEdit->setText(   "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_video.avi"     );
 }
 
-void MainWindow::updateScores(double loca, double mag, double voice, double lips)
-{
-    ui->locaScoreEdit->setText(QString::number(loca));
-    ui->magScoreEdit->setText(QString::number(mag));
-    ui->voiceScoreEdit->setText(QString::number(voice));
-    ui->lipScoreEdit->setText(QString::number(lips));
-}
-
-MainWindow::~MainWindow()
-{
-    generateScoreThread->exit();
-
-    delete ui;
-}
 
 void MainWindow::on_genScoresButton_clicked()
 {
@@ -55,4 +52,18 @@ void MainWindow::on_genScoresButton_clicked()
 
     emit genScoresSig(refLocaPath, refMagPath, refVoicePath, refLipsPath,
                       subLocaPath, subMagPath, subVoicePath,subLipsPath);
+}
+
+void MainWindow::updateScores(double loca, double mag, double voice, double lips)
+{
+    ui->locaScoreEdit->setText(QString::number(loca));
+    ui->magScoreEdit->setText(QString::number(mag));
+    ui->voiceScoreEdit->setText(QString::number(voice));
+    ui->lipScoreEdit->setText(QString::number(lips));
+}
+
+MainWindow::~MainWindow()
+{
+    generateScoreThread->exit();
+    delete ui;
 }
