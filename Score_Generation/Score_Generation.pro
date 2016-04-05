@@ -13,18 +13,25 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    generatescores.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    generatescores.h
 
 FORMS    += mainwindow.ui
 
 INCLUDEPATH += "C:\Program Files\MATLAB\MATLAB Runtime\v85\extern\include"
-
+LIBS        += "C:\Program Files\MATLAB\MATLAB Runtime\v85\extern\lib\win64\microsoft\mclmcrrt.lib"
 
 INCLUDEPATH += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Localization"
 LIBS        += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Localization/LocalizationScore.lib"
 
-LIBS        += "C:\Program Files\MATLAB\MATLAB Runtime\v85\extern\lib\win64\microsoft\mclmcrrt.lib"
+INCLUDEPATH += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Audio"
+LIBS        += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Audio/AudioScore.lib"
 
+INCLUDEPATH += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Magnetic"
+LIBS        += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Magnetic/MagneticScore.lib"
 
+INCLUDEPATH += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Video"
+LIBS        += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Video/VideoScore.lib"

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +19,17 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    QThread *generateScoreThread;
+
+public slots:
+    void updateScores(double loca, double mag, double voice, double lips);
+
+signals:
+    void genScoresSig(QString refLoca, QString refMag, QString refAudio, QString refLips,
+                      QString subLoca, QString subMag, QString subAudio, QString subLips);
+private slots:
+    void on_genScoresButton_clicked();
 };
 
 #endif // MAINWINDOW_H

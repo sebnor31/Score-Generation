@@ -6,37 +6,118 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
-    <height>337</height>
+    <width>672</width>
+    <height>208</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLineEdit" name="locaScoreEdit">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>130</y>
-      <width>113</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="locaScoreLabel">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>110</y>
-      <width>71</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Localization</string>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1">
+       <widget class="QLabel" name="refLabel">
+        <property name="text">
+         <string>Ref</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="subLabel">
+        <property name="text">
+         <string>Sub</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="scoreLabel">
+        <property name="text">
+         <string>Score</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="locaLabel">
+        <property name="text">
+         <string>Localization</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="refLocaPathEdit"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="subLocaPathEdit"/>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLineEdit" name="locaScoreEdit"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="magLabel">
+        <property name="text">
+         <string>Magnetic</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="refMagPathEdit"/>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLineEdit" name="subMagPathEdit"/>
+      </item>
+      <item row="2" column="3">
+       <widget class="QLineEdit" name="magScoreEdit"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="voiceLabel">
+        <property name="text">
+         <string>Voice</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="refVoicePathEdit"/>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLineEdit" name="subVoicePathEdit"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="lipsLabel">
+        <property name="text">
+         <string>Lips</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="refLipsPathEdit"/>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLineEdit" name="subLipsPathEdit"/>
+      </item>
+      <item row="5" column="3">
+       <widget class="QLineEdit" name="lipScoreEdit"/>
+      </item>
+      <item row="4" column="3">
+       <widget class="QLineEdit" name="voiceScoreEdit"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QPushButton" name="genScoresButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Generate Scores</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
