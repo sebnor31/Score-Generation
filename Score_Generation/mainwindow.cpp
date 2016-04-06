@@ -34,12 +34,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->subVoicePathEdit->setText(  "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_audio1.wav"    );
     ui->subLipsPathEdit->setText(   "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_video.avi"     );
 
+    numTrials = 5;
+    currentTrial = 1;
     setScorePlot();
 }
 
 void MainWindow::setScorePlot()
 {
     ui->scorePlot->plotLayout()->clear();
+
+    QCPMarginGroup *marginGroup = new QCPMarginGroup(ui->scorePlot);
+    QCPRange barRangeX(0, numTrials + 1);
+    QCPRange barRangeY(0, 10);
 
     QCPAxisRect *locaAxis = new QCPAxisRect(ui->scorePlot);
     QCPAxisRect *magAxis = new QCPAxisRect(ui->scorePlot);
@@ -53,14 +59,15 @@ void MainWindow::setScorePlot()
     foreach (QCPAxisRect* axis, scoreAxes) {
         axis->setupFullAxesBox(true);
         axis->axis(QCPAxis::atTop)->setLabelColor(QColor(Qt::blue));
-        axis->axis(QCPAxis::atBottom)->setRange(0,3);
+        axis->axis(QCPAxis::atBottom)->setRange(barRangeX);
         axis->axis(QCPAxis::atBottom)->setAutoTickStep(false);
         axis->axis(QCPAxis::atBottom)->setTickStep(1);
         axis->axis(QCPAxis::atBottom)->setAutoSubTicks(false);
         axis->axis(QCPAxis::atBottom)->setSubTickCount(0);
-        axis->axis(QCPAxis::atLeft)->setRange(0,10);
+        axis->axis(QCPAxis::atLeft)->setRange(barRangeY);
         axis->axis(QCPAxis::atLeft)->setAutoTickStep(false);
         axis->axis(QCPAxis::atLeft)->setTickStep(1);
+        axis->setMarginGroup(QCP::msLeft, marginGroup);
     }
 
 
@@ -76,25 +83,47 @@ void MainWindow::setScorePlot()
     ui->scorePlot->plotLayout()->addElement(2, 0, voiceAxis);
     ui->scorePlot->plotLayout()->addElement(2, 1, lipsAxis);
 
-
-    locaBars = new QCPBars(locaAxis->axis(QCPAxis::atBottom), locaAxis->axis(QCPAxis::atLeft));
-    magBars = new QCPBars(magAxis->axis(QCPAxis::atBottom), magAxis->axis(QCPAxis::atLeft));
-    voiceBars = new QCPBars(voiceAxis->axis(QCPAxis::atBottom), voiceAxis->axis(QCPAxis::atLeft));
-    lipsBars = new QCPBars(lipsAxis->axis(QCPAxis::atBottom), lipsAxis->axis(QCPAxis::atLeft));
-    avgScoreBars = new QCPBars(avgScoreAxis->axis(QCPAxis::atBottom), avgScoreAxis->axis(QCPAxis::atLeft));
-
-    QVector<QCPBars*> scoreBars;
-    scoreBars << locaBars << magBars << voiceBars << lipsBars << avgScoreBars;
-
-    foreach (QCPBars* bars, scoreBars) {
-        bars->setWidth(0.2);
+    for (int i = 0; i <= numTrials; i++) {
+        locaBars.append(new QCPBars(locaAxis->axis(QCPAxis::atBottom), locaAxis->axis(QCPAxis::atLeft)));
+        magBars.append(new QCPBars(magAxis->axis(QCPAxis::atBottom), magAxis->axis(QCPAxis::atLeft)));
+        voiceBars.append(new QCPBars(voiceAxis->axis(QCPAxis::atBottom), voiceAxis->axis(QCPAxis::atLeft)));
+        lipsBars.append(new QCPBars(lipsAxis->axis(QCPAxis::atBottom), lipsAxis->axis(QCPAxis::atLeft)));
+        avgScoreBars.append(new QCPBars(avgScoreAxis->axis(QCPAxis::atBottom), avgScoreAxis->axis(QCPAxis::atLeft)));
     }
 
-    ui->scorePlot->addPlottable(locaBars);
-    ui->scorePlot->addPlottable(magBars);
-    ui->scorePlot->addPlottable(voiceBars);
-    ui->scorePlot->addPlottable(lipsBars);
-    ui->scorePlot->addPlottable(avgScoreBars);
+    QVector<QVector<QCPBars*>> scoreBars;
+    scoreBars << locaBars << magBars << voiceBars << lipsBars << avgScoreBars;
+
+    foreach (QVector<QCPBars*> bars, scoreBars) {
+
+        foreach(QCPBars* bar, bars) {
+            bar->setWidth(0.2);
+            bar->setPen(QPen(QColor(Qt::black)));
+
+            QVector<double> keys(numTrials+2);
+            QVector<double> values(keys.size(), 0.0);
+
+            for (int key = 0; key < keys.size(); key++) {
+                keys[key] = key;
+            }
+            bar->setData(keys, values);
+
+            ui->scorePlot->addPlottable(bar);
+        }
+    }
+
+    // Set Color Gradient and Scale
+    colorGrad.loadPreset(QCPColorGradient::gpIon);
+    QCPColorScale *colorScale = new QCPColorScale(ui->scorePlot);
+    colorScale->setGradient(colorGrad);
+    colorScale->setDataRange(barRangeY);
+    colorScale->setMarginGroup(QCP::msLeft, marginGroup);
+    colorScale->axis()->setAutoTickStep(false);
+    colorScale->axis()->setTickStep(1);
+    colorScale->axis()->setAutoSubTicks(false);
+    colorScale->axis()->setSubTickCount(0);
+
+    ui->scorePlot->plotLayout()->addElement(0, 2, colorScale);
 }
 
 void MainWindow::on_genScoresButton_clicked()
@@ -120,17 +149,31 @@ void MainWindow::updateScores(double loca, double mag, double voice, double lips
     ui->voiceScoreEdit->setText(QString::number(voice));
     ui->lipScoreEdit->setText(QString::number(lips));
 
-    locaBars->addData(1, loca);
-    magBars->addData(1, mag);
-    voiceBars->addData(1, voice);
-    lipsBars->addData(1, lips);
-
     double avgScore = (loca + mag + voice + lips) / 4.0;
-    avgScoreBars->addData(1, avgScore);
 
+    loca = 0.5; mag = 2.0; voice = 5.0; lips = 8.0; avgScore = 10;
+
+    double scores[5] = {loca, mag, voice, lips, avgScore};
+    QRgb colors[5];
+    colorGrad.colorize(scores, QCPRange(0.0, 10.0), colors, 5);
+
+    locaBars[currentTrial]->addData(currentTrial, loca);
+    locaBars[currentTrial]->setBrush(QBrush(QColor(colors[0])));
+
+    magBars[currentTrial]->addData(currentTrial, mag);
+    magBars[currentTrial]->setBrush(QBrush(QColor(colors[1])));
+
+    voiceBars[currentTrial]->addData(currentTrial, voice);
+    voiceBars[currentTrial]->setBrush(QBrush(QColor(colors[2])));
+
+    lipsBars[currentTrial]->addData(currentTrial, lips);
+    lipsBars[currentTrial]->setBrush(QBrush(QColor(colors[3])));
+
+    avgScoreBars[currentTrial]->addData(currentTrial, avgScore);
+    avgScoreBars[currentTrial]->setBrush(QBrush(QColor(colors[4])));
 
     ui->scorePlot->replot();
-
+    currentTrial++;
 }
 
 MainWindow::~MainWindow()

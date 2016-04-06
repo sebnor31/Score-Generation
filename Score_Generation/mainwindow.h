@@ -24,11 +24,15 @@ private:
     Ui::MainWindow *ui;
     QThread *generateScoreThread;
 
-    QCPBars *locaBars;
-    QCPBars *magBars;
-    QCPBars *voiceBars;
-    QCPBars *lipsBars;
-    QCPBars *avgScoreBars;
+    QVector<QCPBars*> locaBars;
+    QVector<QCPBars*> magBars;
+    QVector<QCPBars*> voiceBars;
+    QVector<QCPBars*> lipsBars;
+    QVector<QCPBars*> avgScoreBars;
+    QCPColorGradient colorGrad;
+
+    int numTrials;
+    int currentTrial;
 
 public slots:
     void updateScores(double loca, double mag, double voice, double lips);
