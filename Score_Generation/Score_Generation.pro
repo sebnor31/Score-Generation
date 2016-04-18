@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-03-29T16:55:15
+# Project created by Nordine Sebkhi
 #
 #-------------------------------------------------
 
@@ -26,6 +26,7 @@ FORMS    += mainwindow.ui
 INCLUDEPATH += "C:\Program Files\MATLAB\MATLAB Runtime\v85\extern\include"
 LIBS        += "C:\Program Files\MATLAB\MATLAB Runtime\v85\extern\lib\win64\microsoft\mclmcrrt.lib"
 
+# TODO: Use relative path in future to improve portability
 INCLUDEPATH += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Localization"
 LIBS        += "C:/Users/nsebkhi3/GitHub/Perso/Score-Generation/Libs/Localization/LocalizationScore.lib"
 

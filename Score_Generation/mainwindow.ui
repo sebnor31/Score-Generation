@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,5">
     <item>
-     <layout class="QGridLayout" name="gridLayout" rowstretch="2,1,1,1,1,1" columnstretch="1,2,2,2,0" rowminimumheight="0,0,0,0,0,0">
+     <layout class="QGridLayout" name="gridLayout" rowstretch="2,1,1,1,1" columnstretch="1,2,2,2" rowminimumheight="0,0,0,0,0">
       <item row="0" column="2">
        <widget class="QLabel" name="subLabel">
         <property name="text">
@@ -128,7 +128,9 @@
     </item>
     <item>
      <widget class="QCustomPlot" name="scorePlot" native="true">
-      <zorder></zorder>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>

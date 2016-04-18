@@ -1,15 +1,28 @@
+/*****************************************
+ * This class manages the UI elements,
+ * specifically the score plots.
+ *
+ * Author: Nordine Sebkhi
+ ****************************************/
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 
 #include "generatescores.h"
 #include <QVector>
 #include <QDebug>
 
+/**
+ * @brief Constructor of MainWindow that creates a score generating thread
+ * and initialize field values and score plot
+ *
+ * @param parent
+ */
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
+    // Start score generating thread
     generateScoreThread = new QThread(this);
 
     GenerateScores *genScores = new GenerateScores();
@@ -34,19 +47,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->subVoicePathEdit->setText(  "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_audio1.wav"    );
     ui->subLipsPathEdit->setText(   "C:/TTS_Data/NEU/Sub1/word/angry/angry_2/angry_2_video.avi"     );
 
+    // Initialize the score plot with 5 trials
     numTrials = 5;
     currentTrial = 1;
     setScorePlot();
 }
 
+/**
+ * @brief Set the layout and axis of the score plot.
+ * Initialize score bars to 0.0 with number of trials.
+ */
 void MainWindow::setScorePlot()
 {
+    // Always clear default layout
     ui->scorePlot->plotLayout()->clear();
 
+    // MarginGroup is used to align subplots for better appearance
     QCPMarginGroup *marginGroup = new QCPMarginGroup(ui->scorePlot);
     QCPRange barRangeX(0, numTrials + 1);
     QCPRange barRangeY(0, 10);
 
+    // Initiialize an axis for each modality
     QCPAxisRect *locaAxis = new QCPAxisRect(ui->scorePlot);
     QCPAxisRect *magAxis = new QCPAxisRect(ui->scorePlot);
     QCPAxisRect *voiceAxis = new QCPAxisRect(ui->scorePlot);
@@ -70,7 +91,6 @@ void MainWindow::setScorePlot()
         axis->setMarginGroup(QCP::msLeft, marginGroup);
     }
 
-
     locaAxis->axis(QCPAxis::atTop)->setLabel("Localization");
     magAxis->axis(QCPAxis::atTop)->setLabel("Magnetic");
     voiceAxis->axis(QCPAxis::atTop)->setLabel("Voice");
@@ -83,6 +103,8 @@ void MainWindow::setScorePlot()
     ui->scorePlot->plotLayout()->addElement(2, 0, voiceAxis);
     ui->scorePlot->plotLayout()->addElement(2, 1, lipsAxis);
 
+    // To enable color mapping of bars to its value on a same bar axis,
+    // a bar group should be created for each trial that contains 0.0 for all trials than current
     for (int i = 0; i <= numTrials; i++) {
         locaBars.append(new QCPBars(locaAxis->axis(QCPAxis::atBottom), locaAxis->axis(QCPAxis::atLeft)));
         magBars.append(new QCPBars(magAxis->axis(QCPAxis::atBottom), magAxis->axis(QCPAxis::atLeft)));
@@ -126,37 +148,54 @@ void MainWindow::setScorePlot()
     ui->scorePlot->plotLayout()->addElement(0, 2, colorScale);
 }
 
+/**
+ * @brief Generate Scores button clicked
+ * Get file paths and emit signal to generate scores
+ */
 void MainWindow::on_genScoresButton_clicked()
 {
+    // Get reference paths
     QString refLocaPath     = ui->refLocaPathEdit->text();
     QString refMagPath      = ui->refMagPathEdit->text();
     QString refVoicePath    = ui->refVoicePathEdit->text();
     QString refLipsPath     = ui->refLipsPathEdit->text();
 
+    // Get subject paths
     QString subLocaPath     = ui->subLocaPathEdit->text();
     QString subMagPath      = ui->subMagPathEdit->text();
     QString subVoicePath    = ui->subVoicePathEdit->text();
     QString subLipsPath     = ui->subLipsPathEdit->text();
 
+    // Emit signal to generate scores to the thread
     emit genScoresSig(refLocaPath, refMagPath, refVoicePath, refLipsPath,
                       subLocaPath, subMagPath, subVoicePath,subLipsPath);
 }
 
+/**
+ * @brief Update bar plots according to generateds scores
+ * @param loca  localization score
+ * @param mag   magnetic data score
+ * @param voice voice score
+ * @param lips  video score
+ */
 void MainWindow::updateScores(double loca, double mag, double voice, double lips)
 {
+    // Show numerical display of the scores
     ui->locaScoreEdit->setText(QString::number(loca));
     ui->magScoreEdit->setText(QString::number(mag));
     ui->voiceScoreEdit->setText(QString::number(voice));
     ui->lipScoreEdit->setText(QString::number(lips));
 
+    // Compute the average of scores from all modalities
+    // May need to change it to a weighted average in future studies
     double avgScore = (loca + mag + voice + lips) / 4.0;
 
-    loca = 0.5; mag = 2.0; voice = 5.0; lips = 8.0; avgScore = 10;
-
+    // Get the colors associated with the score values
     double scores[5] = {loca, mag, voice, lips, avgScore};
     QRgb colors[5];
     colorGrad.colorize(scores, QCPRange(0.0, 10.0), colors, 5);
 
+    // Update bars and their color
     locaBars[currentTrial]->addData(currentTrial, loca);
     locaBars[currentTrial]->setBrush(QBrush(QColor(colors[0])));
 
@@ -176,6 +215,10 @@ void MainWindow::updateScores(double loca, double mag, double voice, double lips
     currentTrial++;
 }
 
+/**
+ * @brief Destructor of MainWindow
+ * Perform a clean exit of the score generating thread
+ */
 MainWindow::~MainWindow()
 {
     generateScoreThread->exit();
